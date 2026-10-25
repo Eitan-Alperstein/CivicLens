@@ -4,6 +4,7 @@
 
 :root {
   --bg: #f4f1ea;            /* warm paper */
+  --mist: #dfe5ec;          /* where the hero's navy fades into the page */
   --surface: #ffffff;
   --text: #17202b;
   --muted: #5f6b78;
@@ -38,12 +39,20 @@ body {
   color: var(--text);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  /* Column layout so main stretches and the footer sits at the bottom even with no results */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Full-width so its background (contour pattern over a fade) can fade from a navy-tinted mist (matching the
+   mountains' foreground ridge) down into the paper color; content stays 840px wide. */
 main {
-  max-width: 840px;
-  margin: 0 auto;
-  padding: 0 16px 80px;
+  flex: 1;
+  padding: 0 max(16px, calc((100% - 840px) / 2)) 80px;
+  background:
+    url("topo.svg") center top / 900px 900px repeat,             /* faint contour lines, like a trail map */
+    linear-gradient(to bottom, var(--mist) 0, var(--bg) 520px);   /* mist under the mountains fading to paper */
 }
 
 /* ---------- Hero ---------- */
@@ -59,7 +68,12 @@ main {
     linear-gradient(170deg, var(--navy-900) 0%, var(--navy-700) 55%, var(--navy-500) 100%);
 }
 
-/* Front Range silhouette along the bottom of the hero */
+/* Front Range silhouette, in layers.
+   ::before = far + middle ranges (these drift on scroll for parallax)
+   ::after  = the paper-colored foreground ridge (stays put, blends into the page) */
+.hero > * { position: relative; z-index: 1; }
+
+.hero::before,
 .hero::after {
   content: "";
   position: absolute;
@@ -68,9 +82,31 @@ main {
   bottom: -1px;
   height: 110px;
   pointer-events: none;
+}
+
+.hero::before {
   background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 110' preserveAspectRatio='none'%3E%3Cpath fill='%23ffffff' fill-opacity='0.07' d='M0 70 L120 30 L210 62 L330 12 L450 58 L560 26 L690 66 L820 18 L950 60 L1060 34 L1180 70 L1310 22 L1440 56 V110 H0Z'/%3E%3Cpath fill='%23ffffff' fill-opacity='0.12' d='M0 88 L150 54 L260 80 L390 40 L520 84 L640 52 L770 86 L900 46 L1030 82 L1150 58 L1290 88 L1440 64 V110 H0Z'/%3E%3Cpath fill='%23f4f1ea' d='M0 104 L180 84 L330 100 L470 78 L640 102 L800 82 L960 100 L1120 80 L1280 100 L1440 86 V110 H0Z'/%3E%3C/svg%3E")
-    bottom / 100% 100% no-repeat;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 110' preserveAspectRatio='none'%3E%3Cpath fill='%23ffffff' fill-opacity='0.07' d='M0 70 L120 30 L210 62 L330 12 L450 58 L560 26 L690 66 L820 18 L950 60 L1060 34 L1180 70 L1310 22 L1440 56 V110 H0Z'/%3E%3C/svg%3E") center bottom / 100% 110px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 110' preserveAspectRatio='none'%3E%3Cpath fill='%23ffffff' fill-opacity='0.12' d='M0 88 L150 54 L260 80 L390 40 L520 84 L640 52 L770 86 L900 46 L1030 82 L1150 58 L1290 88 L1440 64 V110 H0Z'/%3E%3C/svg%3E") center bottom / 100% 110px no-repeat;
+}
+
+.hero::after {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 110' preserveAspectRatio='none'%3E%3Cpath fill='%23dfe5ec' d='M0 104 L180 84 L330 100 L470 78 L640 102 L800 82 L960 100 L1120 80 L1280 100 L1440 86 V110 H0Z'/%3E%3C/svg%3E") center bottom / 100% 110px no-repeat;
+}
+
+/* Parallax: as the page scrolls, the far range sinks faster than the middle one,
+   so the layers seem to sit at different distances. Browsers without
+   scroll-driven animations just show static mountains. */
+@supports (animation-timeline: scroll()) {
+  .hero::before {
+    animation: ranges-drift linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 420px;
+  }
+}
+
+@keyframes ranges-drift {
+  to { background-position: center bottom -70px, center bottom -30px; }
 }
 
 .hero h1 {
@@ -190,6 +226,7 @@ main {
   background: var(--surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
+  overflow: hidden;          /* keeps the gold top bar inside the rounded corners */
   animation: rise 0.35s ease-out both;
 }
 
@@ -199,7 +236,6 @@ main {
   position: absolute;
   inset: 0 0 auto 0;
   height: 4px;
-  border-radius: var(--radius) var(--radius) 0 0;
   background: linear-gradient(90deg, var(--gold), var(--navy-500));
 }
 
@@ -429,4 +465,60 @@ main {
   .search-form button[type="submit"] { padding: 14px; border-radius: 999px; }
   .overview { padding: 20px; }
   .card { padding: 16px 18px 16px 20px; }
+}
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+  position: relative;
+  padding: 56px 16px 40px;
+  color: rgba(255, 255, 255, 0.72);
+  background: linear-gradient(170deg, var(--navy-700) 0%, var(--navy-900) 100%);
+  border-top: 4px solid var(--gold);
+  font-size: 0.88rem;
+}
+
+.footer-inner {
+  max-width: 840px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.site-footer p { margin: 0 0 12px; }
+
+.footer-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+}
+
+.footer-sources { color: rgba(255, 255, 255, 0.85); }
+
+.site-footer a {
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(224, 165, 38, 0.6);
+}
+
+.site-footer a:hover { border-bottom-color: var(--gold); }
+
+.footer-dot { margin: 0 8px; color: rgba(255, 255, 255, 0.4); }
+
+.footer-note {
+  max-width: 520px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  font-size: 0.82rem;
+}
+
+.footer-credit {
+  margin-top: 20px !important;
+  margin-bottom: 0 !important;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
 }

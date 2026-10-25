@@ -1,4 +1,5 @@
 let records = []
+let latestSearch = 0   // race guard: bumped on every search so older AI streams know to stop
 const fillers = new Set([
     "what", "is", "are", "the", "a", "an", "about", "doing", "does", "do", "how", "for", "to", 
     "of", "in", "on", "and", "or", "has", "have", "been", "being", "city", "considering", 
@@ -141,6 +142,108 @@ function formatDate(isoDate) {
     return new Date(y, m - 1, d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
+function formatTopRecords(results, limit = 8) {
+    // Numbered from 1 in card order, so the model's [1] is card-1 on the page
+    return "\n\n" + results.slice(0, limit).map((item, i) => {
+        const r = item.record;
+        return [
+            `[${i + 1}] ${r.title}`,
+            `Agency: ${r.agency}${r.committee ? ` (${r.committee})` : ""}`,
+            `Date: ${r.date}`,
+            `Status: ${r.status}`,
+            r.excerpt ? `Excerpt: ${r.excerpt}` : "",
+        ].filter(Boolean).join("\n");
+    }).join("\n\n");
+}
+
+async function overview(question, results) {
+    const thisSearch = ++latestSearch;
+    const isStale = () => thisSearch !== latestSearch;   // true once a newer search has started
+
+    if (results.length == 0) {
+        document.querySelector(".overview").hidden = true;
+        return;
+    }
+
+    const overviewText = document.querySelector(".overview-text")
+    let aiSummary;
+
+    overviewText.innerHTML = "";
+    document.querySelector(".overview").hidden = false;
+    document.querySelector(".overview").classList.add("loading")
+
+    try {
+        let response = await fetch("http://localhost:11434/api/chat", {
+            method: "POST",
+            body: JSON.stringify({
+                "model": "llama3.1:8b",
+                "messages": [
+                    {"role": "system", "content": "You are a civic assistant for Colorado and Denver residents. You will answer and cite only based on the numbered records below. Cite like [2], for example, for Document 2. If you need to cite two documents at once, use the format [1][3] rather than [1,3]. Keep it to one short paragraph in plain English, and say plainly when the records don't quite answer the question. Use chronological terms to help build out timelines of events."},
+                    {"role": "user", "content": `Question: ${question}. Top documents: ${formatTopRecords(results)}`}
+                ],
+                "stream": true,
+                "options": { temperature: 0.2 }
+            })
+        })
+        if (isStale()) return;
+        if (!response.ok) throw Error("Ollama returned " + response.status);
+
+        // Streamed reply: one JSON object per line, e.g. {"message":{"content":"Den"},"done":false}
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        aiSummary = "";
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (isStale()) {
+                reader.cancel();   // closing the connection also tells Ollama to stop generating
+                return;
+            }
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop();   // the last piece may be half a line; keep it for the next round
+
+            for (const line of lines) {
+                if (!line.trim()) continue;
+                const chunk = JSON.parse(line);
+                const text = chunk.message?.content ?? "";
+                if (!text) continue;
+
+                if (aiSummary === "") document.querySelector(".overview").classList.remove("loading");
+                aiSummary += text;
+                overviewText.textContent += text;
+
+                let interactiveAiSummary = "";
+
+                for (const part of aiSummary.split(/(\[\d+\])/)) {
+                    if (part.match(/\[\d+\]/) && Number(part.slice(1,part.length-1)) <= Math.min(8,results.length)) {
+                        interactiveAiSummary += `<a class='cite' href='#card-${part.slice(1,part.length-1)}'>${part}</a>`
+                    } else {
+                        interactiveAiSummary += part;
+                    }
+                }
+
+                overviewText.innerHTML = interactiveAiSummary;
+            }
+        }
+
+        
+
+        // Empty answer (unusual) shouldn't leave the loading text pulsing
+        document.querySelector(".overview").classList.remove("loading")
+    } catch (e) {
+        if (isStale()) return;   // a newer search owns the panel now
+        document.querySelector(".overview").classList.remove("loading")
+        overviewText.innerHTML = "<b class='ai-overview-error'>AI Overview unavailable.</b>"
+    }
+
+    
+
+}
+
 async function main() {
     await load_data();
     console.log("Record retrieval successful! Number: " + records.length);
@@ -151,7 +254,7 @@ async function main() {
         const docScore = score(keywords);
         render(docScore);
 
-        
+        overview(document.querySelector(".search-input").value, docScore);
     })
 
     for (const chip of document.querySelectorAll(".sample-chip")) {

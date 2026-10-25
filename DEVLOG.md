@@ -32,3 +32,18 @@
 
 10/25/26-14:57 -- Eitan: made sample question chips work.
 
+10/25/26 -- AI (Claude Code, Claude Opus 5.5): at the human developer's request, wrote `formatTopRecords()` in `web/app.js` (formats the top 8 results as numbered records for the AI prompt, numbered to match card ids) and passed the search results into `overview()` from `main()`. The `overview()` function and system prompt are the human developer's.
+
+10/25/26 -- AI (Claude Code, Claude Opus 5.5): fixed the loading indicator in `overview()` (the `loading` class was added to `.overview` but removed from `.overview-text`).
+
+10/25/26-15:24 -- Eitan: Created a function for AI overviews.
+
+10/25/26 -- AI (Claude Code, Claude Opus 5.5): at the human developer's request, implemented streaming in `overview()` in `web/app.js` (reads Ollama's line-by-line JSON stream, buffers partial lines, appends text as it arrives, clears the loading state on the first words, checks the HTTP status). Tested the parsing loop against a real Ollama stream split into 7-byte pieces.
+
+10/25/26-15:35 -- Eitan: Made links to documents that the AI generates interactive.
+
+10/25/26 -- AI (Claude Code, Claude Opus 5.5): at the human developer's request, added a race guard to `overview()` in `web/app.js` (a search counter; an older AI stream stops and cancels itself once a newer search starts). In `web/style.css`: split the mountain silhouette into layers with a scroll-driven parallax effect (static fallback in browsers without scroll-driven animations), and fixed the AI overview's gold top bar spilling past the rounded corners.
+
+10/25/26 -- AI (Claude Code, Claude Opus 5.5): per the human developer's choice of design options, added a gradient below the hero (navy-tinted mist fading into the paper color, with the mountain ridge recolored to match) and a footer listing the data sources plus an AI-accuracy note (new `<footer>` in `web/index.html`, styles in `web/style.css`, footer pinned to the bottom of the window).
+
+10/25/26 -- AI (Claude Code, Claude Opus 5.5): replaced the first topographic pattern (overlapping loops, visible tiling) after the human developer rejected it. New approach in `tools/make_topo.py`: build an exactly periodic height field (sum of sine waves with whole-number frequencies per tile), then trace contour lines with marching squares, so lines never cross and the 900px tile repeats with no seam. Output is `web/topo.svg` (seed 11, 39 KB), checked in a 2x2 tiled render with seam markers.
