@@ -1,0 +1,432 @@
+/* CivicLens styles. Class names match index.html / app.js. */
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --bg: #f4f1ea;            /* warm paper */
+  --surface: #ffffff;
+  --text: #17202b;
+  --muted: #5f6b78;
+  --border: #e4ddd0;
+  --navy-900: #0e1f33;
+  --navy-700: #1b3654;
+  --navy-500: #2c5280;
+  --gold: #e0a526;          /* Colorado gold */
+  --gold-soft: #fbf1d9;
+  --city: #2b5f9e;
+  --city-bg: #e4edf8;
+  --state: #2d7a4f;
+  --state-bg: #e1f1e7;
+  --radius: 14px;
+  --shadow-sm: 0 1px 2px rgba(23, 32, 43, 0.06);
+  --shadow: 0 1px 2px rgba(23, 32, 43, 0.05), 0 6px 20px rgba(23, 32, 43, 0.06);
+  --shadow-lg: 0 2px 4px rgba(23, 32, 43, 0.06), 0 14px 34px rgba(23, 32, 43, 0.12);
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  max-width: 840px;
+  margin: 0 auto;
+  padding: 0 16px 80px;
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 72px 16px 120px;
+  text-align: center;
+  color: #fff;
+  background:
+    radial-gradient(900px 360px at 50% -20%, rgba(90, 140, 200, 0.35), transparent 65%),
+    linear-gradient(170deg, var(--navy-900) 0%, var(--navy-700) 55%, var(--navy-500) 100%);
+}
+
+/* Front Range silhouette along the bottom of the hero */
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 110px;
+  pointer-events: none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 110' preserveAspectRatio='none'%3E%3Cpath fill='%23ffffff' fill-opacity='0.07' d='M0 70 L120 30 L210 62 L330 12 L450 58 L560 26 L690 66 L820 18 L950 60 L1060 34 L1180 70 L1310 22 L1440 56 V110 H0Z'/%3E%3Cpath fill='%23ffffff' fill-opacity='0.12' d='M0 88 L150 54 L260 80 L390 40 L520 84 L640 52 L770 86 L900 46 L1030 82 L1150 58 L1290 88 L1440 64 V110 H0Z'/%3E%3Cpath fill='%23f4f1ea' d='M0 104 L180 84 L330 100 L470 78 L640 102 L800 82 L960 100 L1120 80 L1280 100 L1440 86 V110 H0Z'/%3E%3C/svg%3E")
+    bottom / 100% 100% no-repeat;
+}
+
+.hero h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+/* Small gold rule under the logo */
+.hero h1::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin: 16px auto 0;
+  border-radius: 2px;
+  background: var(--gold);
+}
+
+.hero h2 {
+  margin: 14px 0 32px;
+  font-size: clamp(1rem, 2.4vw, 1.2rem);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ---------- Search ---------- */
+
+.search-form {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+/* Input and button sit together as one pill */
+.search-input {
+  min-width: 0;
+  padding: 18px 22px;
+  font: inherit;
+  font-size: 1.05rem;
+  color: var(--text);
+  background: #fff;
+  border: 2px solid transparent;
+  border-right: none;
+  border-radius: 999px 0 0 999px;
+  outline: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  transition: border-color 0.15s;
+}
+
+.search-input::placeholder { color: #8a95a3; }
+
+.search-input:focus { border-color: var(--gold); }
+
+.search-form input[type="submit"],
+.search-form button[type="submit"] {
+  padding: 0 28px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--navy-900);
+  background: var(--gold);
+  border: none;
+  border-radius: 0 999px 999px 0;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  transition: filter 0.15s;
+}
+
+.search-form input[type="submit"]:hover,
+.search-form button[type="submit"]:hover { filter: brightness(1.08); }
+
+.samples {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.sample-chip {
+  padding: 8px 15px;
+  font: inherit;
+  font-size: 0.86rem;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.sample-chip i { font-style: normal; }
+
+.sample-chip { max-width: 100%; white-space: normal; text-align: center; }
+
+.sample-chip:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(224, 165, 38, 0.7);
+  transform: translateY(-1px);
+}
+
+/* ---------- AI overview ---------- */
+
+.overview {
+  position: relative;
+  margin: -64px 0 32px;      /* overlaps the mountains, like a card resting on the hero */
+  padding: 26px 30px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  animation: rise 0.35s ease-out both;
+}
+
+/* Gold-to-navy top edge */
+.overview::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: linear-gradient(90deg, var(--gold), var(--navy-500));
+}
+
+.overview h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--navy-700);
+}
+
+.overview h3::before {
+  content: "✦";
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  font-size: 0.8rem;
+  color: var(--navy-900);
+  background: var(--gold-soft);
+  border-radius: 50%;
+}
+
+.overview-text {
+  white-space: pre-wrap;     /* keep the model's line breaks while it streams */
+  font-size: 1.04rem;
+  line-height: 1.7;
+}
+
+/* Add class "loading" to .overview while waiting for the first words */
+.overview.loading .overview-text::after {
+  content: "Reading the records…";
+  color: var(--muted);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.cite {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  margin: 0 2px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: 0.15em;
+  color: var(--navy-700);
+  background: var(--gold-soft);
+  border: 1px solid rgba(224, 165, 38, 0.45);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.cite:hover { color: #fff; background: var(--navy-700); border-color: var(--navy-700); }
+
+/* ---------- Results ---------- */
+
+/* When there's no overview, pull the results up onto the hero instead */
+.overview[hidden] + .results { margin-top: -64px; }
+
+.results {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.results-count {
+  margin: 0 0 2px 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.overview[hidden] + .results .results-count {
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.75);   /* sits over the mountains */
+}
+
+.card {
+  position: relative;
+  padding: 20px 24px 18px 26px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  scroll-margin-top: 20px;
+  animation: rise 0.35s ease-out both;
+  animation-delay: calc(var(--i, 0) * 35ms);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+
+/* Colored stripe on the left: blue for city, green for state */
+.card::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 14px;
+  bottom: 14px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--city);
+}
+
+.card.state::before { background: var(--state); }
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Highlight a card when a citation link jumps to it */
+.card:target {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(224, 165, 38, 0.28), var(--shadow-lg);
+}
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 0;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.meta-item + .meta-item::before {
+  content: "·";
+  margin: 0 8px;
+  color: #b9b2a5;
+}
+
+.badge {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 3px 10px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  border-radius: 999px;
+}
+
+.badge.city  { color: var(--city);  background: var(--city-bg); }
+.badge.state { color: var(--state); background: var(--state-bg); }
+
+.card-title {
+  margin: 0 0 8px;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.14rem;
+  line-height: 1.35;
+  color: var(--navy-900);
+}
+
+.card-excerpt {
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+  color: #3b4654;
+}
+
+.card-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: var(--navy-500);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.card-link:hover { color: var(--navy-900); border-bottom-color: var(--gold); }
+
+/* ---------- Empty state ---------- */
+
+.empty {
+  position: relative;   /* paint above the hero's mountain layer */
+  margin-top: 0;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+
+.empty::before {
+  content: "🔍";
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+}
+
+/* ---------- Motion ---------- */
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes pulse {
+  50% { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 560px) {
+  .hero { padding: 48px 16px 100px; }
+  .search-form { grid-template-columns: 1fr; gap: 10px; }
+  .search-input { border-right: 2px solid transparent; border-radius: 999px; }
+  .search-form input[type="submit"],
+  .search-form button[type="submit"] { padding: 14px; border-radius: 999px; }
+  .overview { padding: 20px; }
+  .card { padding: 16px 18px 16px 20px; }
+}

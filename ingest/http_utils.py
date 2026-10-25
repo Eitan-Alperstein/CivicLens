@@ -8,6 +8,7 @@ import requests
 REQUEST_DELAY = 0.3   # seconds to wait before every request
 MAX_RETRIES = 3
 TIMEOUT = 20          # seconds
+RATE_LIMIT_WAIT = 60  # seconds to wait after an HTTP 429
 
 HEADERS = {"User-Agent": "CivicLens/0.1 (Congressional App Challenge student project)"}
 
@@ -28,7 +29,13 @@ def get_json(url, params=None, headers=None):
             print(f"  network error ({err}); retry {attempt + 1}/{MAX_RETRIES}")
             continue
 
-        if resp.status_code == 429 or resp.status_code >= 500:
+        if resp.status_code == 429:
+            # Rate limited. OpenStates' limit is per minute, so a short backoff won't clear it.
+            print(f"  HTTP 429 (rate limited); waiting {RATE_LIMIT_WAIT}s, retry {attempt + 1}/{MAX_RETRIES}")
+            time.sleep(RATE_LIMIT_WAIT)
+            continue
+
+        if resp.status_code >= 500:
             print(f"  HTTP {resp.status_code}; retry {attempt + 1}/{MAX_RETRIES}")
             continue
 
