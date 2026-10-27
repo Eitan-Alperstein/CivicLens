@@ -47,3 +47,6 @@
 10/25/26 -- AI (Claude Code, Claude Opus 5.5): per the human developer's choice of design options, added a gradient below the hero (navy-tinted mist fading into the paper color, with the mountain ridge recolored to match) and a footer listing the data sources plus an AI-accuracy note (new `<footer>` in `web/index.html`, styles in `web/style.css`, footer pinned to the bottom of the window).
 
 10/25/26 -- AI (Claude Code, Claude Opus 5.5): replaced the first topographic pattern (overlapping loops, visible tiling) after the human developer rejected it. New approach in `tools/make_topo.py`: build an exactly periodic height field (sum of sine waves with whole-number frequencies per tile), then trace contour lines with marching squares, so lines never cross and the 900px tile repeats with no seam. Output is `web/topo.svg` (seed 11, 39 KB), checked in a 2x2 tiled render with seam markers.
+
+10/25/26 -- AI (Claude Code, Claude Opus 5.5): at the human developer's request, added Colorado flag styling to `web/style.css`: flag red as an accent color (state badges and stripes, citation hover, card highlight, link hover), a Colorado "C" emblem (inline SVG) replacing the "C" of the CivicLens title (CSS ::first-letter, real letter kept for screen readers) and on the footer's top edge, and red-gold-red rules under the logo and above the footer. No HTML or JS changes.
+

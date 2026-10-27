@@ -3,7 +3,7 @@ let latestSearch = 0   // race guard: bumped on every search so older AI streams
 const fillers = new Set([
     "what", "is", "are", "the", "a", "an", "about", "doing", "does", "do", "how", "for", "to", 
     "of", "in", "on", "and", "or", "has", "have", "been", "being", "city", "considering", 
-    "changes", "decided", "spending", "address"
+    "changes", "decided", "address", "denver"
 ])
 
 async function load_data() {

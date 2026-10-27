@@ -14,10 +14,15 @@
   --navy-500: #2c5280;
   --gold: #e0a526;          /* Colorado gold */
   --gold-soft: #fbf1d9;
-  --city: #2b5f9e;
+  --red: #bf1e2e;           /* Colorado flag red */
+  --red-dark: #9a1624;
+  --red-soft: #fbe7e8;
+  --city: #2b5f9e;          /* Denver = blue */
   --city-bg: #e4edf8;
-  --state: #2d7a4f;
-  --state-bg: #e1f1e7;
+  --state: var(--red);      /* Colorado = flag red */
+  --state-bg: var(--red-soft);
+  /* The Colorado "C": red ring around a gold disc */
+  --co-emblem: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M76.05 28.15 A34 34 0 1 0 76.05 71.85' fill='none' stroke='%23bf1e2e' stroke-width='20'/%3E%3Ccircle cx='50' cy='50' r='23' fill='%23e0a526'/%3E%3C/svg%3E");
   --radius: 14px;
   --shadow-sm: 0 1px 2px rgba(23, 32, 43, 0.06);
   --shadow: 0 1px 2px rgba(23, 32, 43, 0.05), 0 6px 20px rgba(23, 32, 43, 0.06);
@@ -118,15 +123,24 @@ main {
   line-height: 1.05;
 }
 
-/* Small gold rule under the logo */
+/* The "C" of CivicLens becomes the Colorado "C". The real letter stays (transparent),
+   so the title still reads "CivicLens" to screen readers and search engines. */
+.hero h1::first-letter {
+  color: transparent;
+  background: var(--co-emblem) left 0 top 56% / 0.88em no-repeat;   /* sized to match the capital L */
+  padding-right: 0.12em;     /* widen the letter box so the bigger emblem isn't clipped */
+  margin-right: -0.05em;     /* then pull "ivicLens" back in so the spacing looks natural */
+}
+
+/* Flag-colored rule under the logo: red, gold, red */
 .hero h1::after {
   content: "";
   display: block;
-  width: 56px;
+  width: 72px;
   height: 3px;
   margin: 16px auto 0;
   border-radius: 2px;
-  background: var(--gold);
+  background: linear-gradient(90deg, var(--red) 0 36%, var(--gold) 36% 64%, var(--red) 64%);
 }
 
 .hero h2 {
@@ -236,7 +250,7 @@ main {
   position: absolute;
   inset: 0 0 auto 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--gold), var(--navy-500));
+  background: linear-gradient(90deg, var(--red), var(--gold) 50%, var(--navy-500));
 }
 
 .overview h3 {
@@ -295,7 +309,7 @@ main {
   transition: background 0.15s, color 0.15s;
 }
 
-.cite:hover { color: #fff; background: var(--navy-700); border-color: var(--navy-700); }
+.cite:hover { color: #fff; background: var(--red); border-color: var(--red); }
 
 /* ---------- Results ---------- */
 
@@ -336,7 +350,7 @@ main {
   transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
 }
 
-/* Colored stripe on the left: blue for city, green for state */
+/* Colored stripe on the left: blue for city, red for state */
 .card::before {
   content: "";
   position: absolute;
@@ -357,8 +371,8 @@ main {
 
 /* Highlight a card when a citation link jumps to it */
 .card:target {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 4px rgba(224, 165, 38, 0.28), var(--shadow-lg);
+  border-color: var(--red);
+  box-shadow: 0 0 0 4px rgba(191, 30, 46, 0.18), var(--shadow-lg);
 }
 
 .card-meta {
@@ -417,7 +431,7 @@ main {
   transition: color 0.15s, border-color 0.15s;
 }
 
-.card-link:hover { color: var(--navy-900); border-bottom-color: var(--gold); }
+.card-link:hover { color: var(--red-dark); border-bottom-color: var(--red); }
 
 /* ---------- Empty state ---------- */
 
@@ -474,8 +488,23 @@ main {
   padding: 56px 16px 40px;
   color: rgba(255, 255, 255, 0.72);
   background: linear-gradient(170deg, var(--navy-700) 0%, var(--navy-900) 100%);
-  border-top: 4px solid var(--gold);
+  border-top: 4px solid;
+  border-image: linear-gradient(90deg, var(--red) 0 33.3%, var(--gold) 33.3% 66.6%, var(--red) 66.6%) 1;
   font-size: 0.88rem;
+}
+
+/* Colorado "C" sitting on the footer's top edge */
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  width: 36px;
+  height: 36px;
+  margin-left: -18px;
+  border-radius: 50%;
+  background: var(--co-emblem) center / 26px no-repeat, var(--navy-700);
+  box-shadow: 0 0 0 4px var(--navy-700);
 }
 
 .footer-inner {
